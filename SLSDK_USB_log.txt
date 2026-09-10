@@ -1,0 +1,24 @@
+10-09-2026: 14:19:47.210: [INF] usbSDK: ----------**********----------
+10-09-2026: 14:19:47.211: [INF] usbSDK: Device constructor called
+10-09-2026: 14:19:47.211: [INF] usbSDK: SLSDK Version: 2.2.19.0
+10-09-2026: 14:19:47.212: [INF] usbSDK: SLDeviceLib.dll version: 2.2.19.0
+10-09-2026: 14:19:47.212: [INF] usbSDK: SLImage.dll version: 2.2.19.0
+10-09-2026: 14:19:47.212: [INF] usbSDK: SLHelperLibrary.dll version: 2.2.19.0
+10-09-2026: 14:19:47.213: [INF] usbSDK: SLDefectCorrection.dll version: 2.2.19.0
+10-09-2026: 14:19:47.213: [INF] usbSDK: SLInterfaceXDT.dll version: 2.2.19.0
+10-09-2026: 14:19:47.213: [INF] usbSDK: libxdtusb.dll version: 1.4.3.0
+10-09-2026: 14:19:47.214: [INF] usbSDK: libibdt.dll version: 1.0.2.0
+10-09-2026: 14:19:47.214: [INF] usbSDK: libusb-1.0.dll version: 1.0.24.11584
+10-09-2026: 14:19:47.215: [INF] usbSDK: libwinpthread-1.dll version: 1.0.0.0
+10-09-2026: 14:20:06.838: [INF] usbSDK: ----------**********----------
+10-09-2026: 14:20:06.838: [INF] usbSDK: Device constructor called
+10-09-2026: 14:20:06.838: [INF] usbSDK: SLSDK Version: 2.2.19.0
+10-09-2026: 14:20:06.839: [INF] usbSDK: SLDeviceLib.dll version: 2.2.19.0
+10-09-2026: 14:20:06.840: [INF] usbSDK: SLImage.dll version: 2.2.19.0
+10-09-2026: 14:20:06.840: [INF] usbSDK: SLHelperLibrary.dll version: 2.2.19.0
+10-09-2026: 14:20:06.841: [INF] usbSDK: SLDefectCorrection.dll version: 2.2.19.0
+10-09-2026: 14:20:06.841: [INF] usbSDK: SLInterfaceXDT.dll version: 2.2.19.0
+10-09-2026: 14:20:06.841: [INF] usbSDK: libxdtusb.dll version: 1.4.3.0
+10-09-2026: 14:20:06.842: [INF] usbSDK: libibdt.dll version: 1.0.2.0
+10-09-2026: 14:20:06.842: [INF] usbSDK: libusb-1.0.dll version: 1.0.24.11584
+10-09-2026: 14:20:06.843: [INF] usbSDK: libwinpthread-1.dll version: 1.0.0.0

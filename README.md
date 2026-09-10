@@ -7,13 +7,19 @@ measurements slot in beside it.
 
 ## Install
 
+Use the **`sdk-analysis`** conda environment. It is Python 3.10, which is what
+`SLDevicePythonWrapper.pyd` is built against -- the extension cannot be imported
+by any other Python version.
+
 ```powershell
-python -m pip install -e .
+conda activate sdk-analysis
+pip install -r requirements-dev.txt
+pip install -e .
 ```
 
-The vendor SDK (`SLDevicePythonWrapper.pyd` and its DLLs) is installed
-separately -- point `sdk.dll_dir` at the folder containing it. The tool runs
-without the SDK using the `mock` driver.
+The vendor SDK itself is not pip-installable. It is loaded from `sdk.dll_dir`
+(default `C:/SLDevice/SDK/dll/x64/Release`). Everything except the `sldevice`
+driver runs on any supported Python via `--driver mock`.
 
 ## Quick start
 
@@ -116,9 +122,18 @@ Subclass `TestScript`, implement `acquire`, `analyse` and `write_outputs`, and
 decorate with `@register` in `src/emva1288/tests/`. The CLI, preferences,
 storage and report scaffolding pick it up automatically.
 
+## Detector notes
+
+`SetExposureTime` takes **whole milliseconds**, so sweep steps are rounded to
+integers and de-duplicated; the session records the exposure the detector
+actually used, not the one requested. Frame counts are checked after every grab
+(`GetFrameCount` returns `(SLError, count)`) and a short delivery raises rather
+than returning a stack that would silently inflate the measured variance.
+
 ## Tests
 
 ```powershell
+conda activate sdk-analysis
 python -m pytest
 ```
 

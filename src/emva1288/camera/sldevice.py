@@ -233,6 +233,16 @@ class SLDeviceDriver(CameraDriver):
 
     # -- acquisition -----------------------------------------------------
 
+    @staticmethod
+    def quantise_exposure(exposure_ms: float) -> int:
+        """Round to the whole milliseconds the detector actually accepts.
+
+        A linear sweep produces fractional steps, but SetExposureTime takes an
+        integer. Quantising here (and recording the quantised value) keeps the
+        stored exposure equal to the one the detector used.
+        """
+        return max(1, int(round(exposure_ms)))
+
     def grab(self, exposure_ms: float, frames: int) -> np.ndarray:
         if self._device is None or not self._opened:
             raise CameraError("Device is not open")
@@ -241,8 +251,12 @@ class SLDeviceDriver(CameraDriver):
         device = self._device
         full_well = self._enum("FullWellModes", self.full_well_name, "full well mode")
 
-        # Configuration must precede StartStream.
-        self._check(device.SetExposureTime(exposure_ms), "set exposure time")
+        # Configuration must precede StartStream. SetExposureTime takes whole
+        # milliseconds, so round rather than letting a fractional sweep step
+        # fail the pybind11 overload resolution.
+        exposure_ms = self.quantise_exposure(exposure_ms)
+
+        self._check(device.SetExposureTime(int(exposure_ms)), "set exposure time")
         self._check(device.SetNumberOfFrames(frames), "set number of frames")
         self._check(device.SetFullWell(fullWell=full_well), "set full well mode")
 
@@ -275,9 +289,18 @@ class SLDeviceDriver(CameraDriver):
     def _verify_frame_count(self, device: Any, expected: int) -> None:
         """Fail loudly on dropped frames rather than yielding a corrupt PTC."""
         try:
-            delivered = device.GetFrameCount()
+            result = device.GetFrameCount()
         except Exception:
             return  # Not all interfaces expose a usable counter.
+
+        # GetFrameCount returns (SLError, count), not a bare integer.
+        if isinstance(result, tuple):
+            if len(result) != 2 or result[0] != self._sdk.SLError.SL_ERROR_SUCCESS:
+                return
+            delivered = result[1]
+        else:
+            delivered = result
+
         if isinstance(delivered, int) and 0 < delivered < expected:
             raise FrameDropError(
                 f"Detector delivered {delivered} of {expected} frames. "
@@ -288,10 +311,20 @@ class SLDeviceDriver(CameraDriver):
     def scan(self) -> list[str]:
         """Enumerate connected detectors."""
         sdk = load_sdk(self.dll_dir)
-        interface = getattr(sdk.DeviceInterface, self.interface_name)
-        device = sdk.SLDevice(interface)
         try:
-            found = device.ScanCameras()
+            # ScanCameras is a static method; constructing an SLDevice purely
+            # to call it leaves an object whose teardown at interpreter exit
+            # faults inside the native library.
+            found = sdk.SLDevice.ScanCameras()
         except Exception as exc:
             raise CameraError(f"Failed to scan for detectors: {exc}") from None
-        return [str(item) for item in (found or [])]
+
+        results = []
+        for item in found or []:
+            model = getattr(item, "Model", None)
+            serial = getattr(item, "SerialNumber", None) or getattr(item, "Serial", None)
+            if model:
+                results.append(f"{model}" + (f"  serial {serial}" if serial else ""))
+            else:
+                results.append(str(item))
+        return results

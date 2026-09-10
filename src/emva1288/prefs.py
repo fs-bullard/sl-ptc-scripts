@@ -101,7 +101,8 @@ _CHOICES: dict[str, tuple[str, ...]] = {
     "camera.driver": ("sldevice", "mock", "folder"),
     "camera.full_well": ("High", "Low"),
     "camera.binning": ("x11", "x22", "x44"),
-    "sdk.interface": ("USB", "CameraLink", "GigE"),
+    # Members of SLDevicePythonWrapper.DeviceInterface.
+    "sdk.interface": ("USB", "EIO_USB", "CL", "S2I_GIGE", "PLEORA"),
     "exposure_sweep.spacing": ("linear", "log"),
 }
 

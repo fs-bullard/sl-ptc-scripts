@@ -160,6 +160,28 @@ def test_illumination_mode_captures_levels(prefs):
     assert results.fit.system_gain == pytest.approx(0.25, rel=0.05)
 
 
+def test_quantised_exposures_are_deduplicated_and_recorded(prefs):
+    """A driver with integer exposures must not record fractional values.
+
+    The SLDevice SDK takes whole milliseconds, so a fine sweep would otherwise
+    store a requested exposure the detector never actually used, and repeat the
+    same integer exposure several times.
+    """
+
+    class IntegerExposureDriver(MockDriver):
+        @staticmethod
+        def quantise_exposure(exposure_ms: float) -> float:
+            return float(max(1, int(round(exposure_ms))))
+
+    driver = IntegerExposureDriver(width=64, height=64, seed=21)
+    # 10 steps across 10-14 ms collapses to the 5 distinct integers.
+    script, session = _capture(driver, prefs, start_ms=10.0, stop_ms=14.0, steps=10)
+
+    recorded = [level.exposure_ms for level in session.levels]
+    assert recorded == [10.0, 11.0, 12.0, 13.0, 14.0]
+    assert all(value == int(value) for value in recorded)
+
+
 def test_too_few_repeats_is_rejected(prefs):
     driver = MockDriver(width=32, height=32)
     script = PhotonTransferCurve()

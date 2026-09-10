@@ -104,7 +104,16 @@ class PhotonTransferCurve(TestScript):
         prompt: PromptFn,
         common: dict[str, Any],
     ) -> Session:
-        exposures = _exposure_steps(prefs, options)
+        # Snap to what the detector can be set to, then drop duplicates: a fine
+        # sweep at short exposures can otherwise ask for the same integer
+        # exposure several times over.
+        requested = _exposure_steps(prefs, options)
+        exposures: list[float] = []
+        for value in requested:
+            quantised = float(driver.quantise_exposure(value))
+            if quantised not in exposures:
+                exposures.append(quantised)
+
         repeats = common["repeats"]
 
         session = Session.create(
@@ -289,7 +298,14 @@ class PhotonTransferCurve(TestScript):
             # its own statistics, so it sits at zero within rounding.
             if abs(point.mean) < 1.0 and abs(point.variance) < 1.0:
                 continue
-            if point.variance < 0 and point.mean < fit.mu_saturation:
+            # Compare against the clipping flag, not the mean: once pixels
+            # clip, the mean stops tracking illumination and can sit either
+            # side of the estimated saturation signal.
+            if (
+                point.variance < 0
+                and point.saturated_fraction <= 0.01
+                and point.mean < fit.fit_limit
+            ):
                 warnings.append(
                     f"Level {point.index} ({point.value:g} {point.unit}): negative "
                     f"corrected variance ({point.variance:.1f} ADU²) below "

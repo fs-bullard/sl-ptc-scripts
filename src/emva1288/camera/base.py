@@ -81,6 +81,16 @@ class CameraDriver(ABC):
         if the detector delivered fewer frames than asked for.
         """
 
+    @staticmethod
+    def quantise_exposure(exposure_ms: float) -> float:
+        """Snap an exposure to what the hardware can actually be set to.
+
+        Drivers whose exposure is quantised (the SLDevice SDK takes whole
+        milliseconds) override this, so the value recorded in the session is
+        the one the detector really used rather than the one requested.
+        """
+        return exposure_ms
+
     def set_illumination(self, level: float) -> None:
         """Set the incident flux, where 0 means dark.
 
