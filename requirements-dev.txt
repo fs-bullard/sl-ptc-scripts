@@ -1,0 +1,8 @@
+# Development dependencies. Includes everything in requirements.txt.
+#
+#     conda activate sdk-analysis
+#     pip install -r requirements-dev.txt
+
+-r requirements.txt
+
+pytest>=8.0

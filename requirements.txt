@@ -1,0 +1,17 @@
+# Runtime dependencies for the emva1288 toolkit.
+#
+# Install into the sdk-analysis conda environment (Python 3.10), which is the
+# version SLDevicePythonWrapper.pyd is built against:
+#
+#     conda activate sdk-analysis
+#     pip install -r requirements.txt
+#     pip install -e .
+#
+# The vendor SDK itself is not pip-installable -- it is loaded from
+# sdk.dll_dir (default C:/SLDevice/SDK/dll/x64/Release).
+
+numpy>=1.26,<3
+matplotlib>=3.8
+click>=8.1
+tifffile>=2024.1.30
+reportlab>=4.0
