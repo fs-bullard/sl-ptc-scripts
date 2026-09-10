@@ -1,4 +1,4 @@
-# Byte-compiled / optimized / DLL files
+﻿# Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
 *$py.class
@@ -220,3 +220,36 @@ __marimo__/
 .streamlit/secrets.toml
 .claude
 docs
+
+# ---------------------------------------------------------------------------
+# EMVA 1288 toolkit
+# ---------------------------------------------------------------------------
+
+# Captured detector data. Sessions hold hundreds of 16-bit TIFFs and must never
+# be committed; keep them under save_path, outside the repo.
+*.tif
+*.tiff
+*.raw
+*.npy
+data/
+sessions/
+captures/
+emva1288-data/
+
+# Generated results (regenerate with `emva1288 analyse` / `report`)
+results/
+*.pdf
+!docs/**/*.pdf
+
+# Local preferences: machine-specific paths and detector settings
+preferences.json
+!src/**/preferences.json
+
+# Vendor SDK binaries -- installed separately, never vendored
+*.pyd
+*.dll
+
+# Editor / tooling
+.vscode/
+.idea/
+.claude/settings.local.json
