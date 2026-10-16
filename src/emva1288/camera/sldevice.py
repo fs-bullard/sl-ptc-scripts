@@ -319,12 +319,20 @@ class SLDeviceDriver(CameraDriver):
         except Exception as exc:
             raise CameraError(f"Failed to scan for detectors: {exc}") from None
 
+        # SLDeviceInfo carries the transport details (interface, unit index and
+        # an optional ID), not the model name -- that needs an open device.
         results = []
         for item in found or []:
-            model = getattr(item, "Model", None)
-            serial = getattr(item, "SerialNumber", None) or getattr(item, "Serial", None)
-            if model:
-                results.append(f"{model}" + (f"  serial {serial}" if serial else ""))
-            else:
-                results.append(str(item))
+            interface = getattr(item, "Interface", None)
+            unit = getattr(item, "unit", None)
+            identifier = getattr(item, "ID", "") or getattr(item, "DetectorIPAddress", "")
+
+            parts = []
+            if interface is not None:
+                parts.append(getattr(interface, "name", str(interface)))
+            if unit is not None:
+                parts.append(f"unit {unit}")
+            if identifier:
+                parts.append(str(identifier))
+            results.append("  ".join(parts) if parts else str(item))
         return results
