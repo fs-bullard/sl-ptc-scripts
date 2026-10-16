@@ -219,7 +219,7 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 .claude
-docs
+
 
 # ---------------------------------------------------------------------------
 # EMVA 1288 toolkit
